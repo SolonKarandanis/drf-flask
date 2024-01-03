@@ -14,10 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 def callback(ch, method, properties, body):
-    print('Received in Flask microservice')
+    logger.info('Received in Flask microservice')
     data = json.loads(body)
     logger.info(f'data {data}')
-    print(data)
     if properties.content_type == 'orders_created':
         logger.info(f'orders_created message received')
 
