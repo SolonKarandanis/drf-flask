@@ -5,6 +5,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, request
 
 from src.config import Config
+from src.consumer import channel, callback
 
 
 def create_app(test_config=None):
@@ -12,6 +13,12 @@ def create_app(test_config=None):
     logging.basicConfig(format='[%(asctime)s] %(levelname)s %(name)s: %(message)s')
     logging.getLogger().setLevel(logging.DEBUG)
     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+    channel.basic_consume(queue='drf', on_message_callback=callback,
+                          auto_ack=True)
+    channel.start_consuming()
+
+    channel.close()
 
     if test_config is None:
         created_app.config.from_object(Config)
